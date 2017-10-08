@@ -9,8 +9,10 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 	pathutil "path"
 	"strings"
+	"strconv"
 	"github.com/go-xorm/xorm"
 )
 
@@ -20,7 +22,7 @@ var (
 )
 
 type Client struct {
-	Chat int64  
+	Chat int64
 	Uuid string
 }
 
@@ -30,6 +32,20 @@ func env(key, def string) (value string) {
 		return
 	}
 	return def
+}
+
+func envInt(key string, def int) (value int) {
+	valueString := env(key, "")
+	if valueString == "" {
+		return def
+	}
+	var err error
+	value64, err := strconv.ParseInt(valueString, 10, 32)
+	value = int(value64)
+	if err != nil {
+		return def
+	}
+	return
 }
 
 func main() {
@@ -107,10 +123,22 @@ func main() {
 
 	}()
 
-	bot, err = tbot.NewBotAPI(env("API_KEY", ""))
-	if err != nil {
-		log.Println("could not authorise with telegram", err)
-		return
+	{
+		var err error
+		tries := envInt("TRIES", 5)
+		for try := 1; try <= tries; try++ {
+			bot, err = tbot.NewBotAPI(env("API_KEY", ""))
+			if err != nil {
+				log.Println("could not authorise with telegram", err)
+				if try == tries {
+					log.Fatalf("giving up after %d tries", tries)
+				}
+				time.Sleep(time.Second * 60)
+				continue
+			}
+
+			break
+		}
 	}
 
 	bot.Debug = false
@@ -181,7 +209,7 @@ func getChat(uuid string) (chat int64, err error) {
 	if ! has  {
 		return 0, fmt.Errorf("no such client %s", uuid)
 	}
-	
+
 	return client.Chat, err
 }
 
