@@ -28,3 +28,12 @@ Provided your go executable path is in your PATH environment variable
     TRIES={number of times to try to connect to the Telegram API before giving up, default=5} \
     notifierbot
 
+Demo
+---
+
+This bot runs (intermittently) on darfk.net. To see this bot in action add chat to [@darfkbot](https://telegram.me/darfkbot) and ask him to /register .
+
+To recieve a message simply make an HTTP POST request to the server, something like.
+
+    curl -X POST http://darfk.net/notify/[your UUID]?message=your+message+here
+
