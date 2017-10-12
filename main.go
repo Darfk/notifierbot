@@ -80,12 +80,16 @@ func main() {
 				return
 			}
 
-			log.Println("notify request")
+			if req.Method != "POST" {
+				http.Error(res, "405 method not allowed - this endpoint allows only POST requests", http.StatusMethodNotAllowed)
+				return
+			}
 
 			message := req.URL.Query().Get("message")
 
 			if message == "" {
 				http.Error(res, "401 bad request - no message body", http.StatusBadRequest)
+				return
 			}
 
 			chat, err := getChat(path[2])
@@ -189,7 +193,7 @@ func register(message *tbot.Message) {
 		log.Println("error saving new uuid: ", err)
 	}
 
-	msgString := `You will now recieve a message in this chat whenever this URL is requested:
+	msgString := `You will now recieve a message in this chat whenever this URL is posted to:
 ` + env("BASEURL", "http://localhost/notify") + `/` + id.String() + `?message=your+message+here
 
 You can replace the last part with your message
