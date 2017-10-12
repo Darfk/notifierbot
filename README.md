@@ -3,13 +3,6 @@ notifierbot
 
 A scrap notifier bot for telegram, will send you a telegram message when a url is requested.
 
-Tech Used:
-
-- github.com/go-xorm/xorm
-- github.com/mattn/go-sqlite3
-- gopkg.in/telegram-bot-api.v4
-- github.com/nu7hatch/gouuid
-
 Install
 ---
 
@@ -36,4 +29,15 @@ This bot runs (intermittently) on darfk.net. To see this bot in action add chat 
 To recieve a message simply make an HTTP POST request to the server, something like.
 
     curl -X POST http://darfk.net/notify/[your UUID]?message=your+message+here
+
+
+Tech Used
+---
+
+- github.com/go-xorm/xorm
+- github.com/mattn/go-sqlite3
+- gopkg.in/telegram-bot-api.v4
+- github.com/nu7hatch/gouuid
+
+Originally I was using boltdb but I switched to xorm because I believe there was too much boilerplate.
 
